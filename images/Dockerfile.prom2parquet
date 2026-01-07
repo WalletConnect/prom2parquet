@@ -8,3 +8,4 @@ RUN go install github.com/go-delve/delve/cmd/dlv@latest
 COPY prom2parquet /prom2parquet
 
 ENTRYPOINT ["/usr/local/bin/dumb-init", "--"]
+CMD ["/prom2parquet"]
