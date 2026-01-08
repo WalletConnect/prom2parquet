@@ -118,12 +118,12 @@ func (self *promserver) sendTimeseries(ctx context.Context, timeserieses []promp
 
 		nameLabel, _ := lo.Find(ts.Labels, func(i prompb.Label) bool { return i.Name == model.MetricNameLabel })
 		prefixLabel, prefixFound := lo.Find(ts.Labels, func(i prompb.Label) bool { return i.Name == prefixLabelKey })
-		
+
 		prefix := prefixLabel.Value
 		if !prefixFound || prefix == "" {
 			prefix = self.opts.prefix
 		}
-		
+
 		channelName := prefix + "/" + nameLabel.Value
 		if prefix == "" {
 			channelName = nameLabel.Value
