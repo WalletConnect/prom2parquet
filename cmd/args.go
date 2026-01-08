@@ -41,6 +41,7 @@ type options struct {
 	flushInterval time.Duration
 	backend       backends.StorageBackend
 	backendRoot   string
+	prefix        string
 
 	verbosity log.Level
 }

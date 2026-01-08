@@ -58,6 +58,13 @@ func rootCmd() *cobra.Command {
 		"root path/location for the specified backend (e.g. bucket name for AWS S3)",
 	)
 
+	root.PersistentFlags().StringVar(
+		&opts.prefix,
+		prefixFlag,
+		"",
+		"directory prefix for saving parquet files",
+	)
+
 	root.PersistentFlags().VarP(
 		enumflag.New(&opts.verbosity, verbosityFlag, logLevelIDs, enumflag.EnumCaseInsensitive),
 		verbosityFlag,

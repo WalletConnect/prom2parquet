@@ -121,3 +121,69 @@ func TestSpawnWriter(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Contains(t, srv.channels, channelName)
 }
+
+func TestSendTimeseriesWithCLIPrefix(t *testing.T) {
+	cliPrefix := "cli-prefix"
+	srv := newServer(&options{prefix: cliPrefix})
+	expectedChannelName := cliPrefix + "/" + metricName
+	srv.channels[expectedChannelName] = make(chan prompb.TimeSeries)
+
+	ts := prompb.TimeSeries{
+		Labels: []prompb.Label{
+			{
+				Name:  model.MetricNameLabel,
+				Value: metricName,
+			},
+			{
+				Name:  "foo",
+				Value: "bar",
+			},
+		},
+		Samples: []prompb.Sample{
+			{
+				Value:     1.0,
+				Timestamp: 0,
+			},
+		},
+	}
+
+	go func() {
+		err := srv.sendTimeseries(context.TODO(), []prompb.TimeSeries{ts})
+		assert.Nil(t, err)
+	}()
+
+	val := <-srv.channels[expectedChannelName]
+	assert.Equal(t, ts, val)
+}
+
+func TestSendTimeseriesWithoutPrefix(t *testing.T) {
+	srv := newServer(&options{})
+	srv.channels[metricName] = make(chan prompb.TimeSeries)
+
+	ts := prompb.TimeSeries{
+		Labels: []prompb.Label{
+			{
+				Name:  model.MetricNameLabel,
+				Value: metricName,
+			},
+			{
+				Name:  "foo",
+				Value: "bar",
+			},
+		},
+		Samples: []prompb.Sample{
+			{
+				Value:     1.0,
+				Timestamp: 0,
+			},
+		},
+	}
+
+	go func() {
+		err := srv.sendTimeseries(context.TODO(), []prompb.TimeSeries{ts})
+		assert.Nil(t, err)
+	}()
+
+	val := <-srv.channels[metricName]
+	assert.Equal(t, ts, val)
+}
