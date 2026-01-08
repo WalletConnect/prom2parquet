@@ -1,10 +1,22 @@
-FROM golang:1.24-alpine
+FROM golang:1.24-alpine AS builder
 
-RUN wget -O /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.5/dumb-init_1.2.5_x86_64
-RUN chmod +x /usr/local/bin/dumb-init
+WORKDIR /build
+COPY . .
+RUN CGO_ENABLED=0 go build -ldflags "-s -w" -trimpath -o prom2parquet ./cmd/.
 
-RUN go install github.com/go-delve/delve/cmd/dlv@latest
+FROM alpine:latest
 
-COPY prom2parquet /prom2parquet
+ARG TARGETARCH
+RUN apk add --no-cache wget && \
+    case ${TARGETARCH} in \
+        "amd64")  DUMB_INIT_ARCH=x86_64  ;; \
+        "arm64")  DUMB_INIT_ARCH=aarch64  ;; \
+        *)        echo "Unsupported architecture: ${TARGETARCH}" && exit 1 ;; \
+    esac && \
+    wget -O /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.5/dumb-init_1.2.5_${DUMB_INIT_ARCH} && \
+    chmod +x /usr/local/bin/dumb-init && \
+    apk del wget
+
+COPY --from=builder /build/prom2parquet /prom2parquet
 
 ENTRYPOINT ["/usr/local/bin/dumb-init", "--"]
