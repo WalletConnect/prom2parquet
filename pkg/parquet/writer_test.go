@@ -31,14 +31,14 @@ func TestListen(t *testing.T) {
 	}{
 		"no flush": {
 			expectedFiles: []string{
-				"/test/0001-01-01/prefix/kube_node_stuff/00010101000000.parquet",
+				"/test/prefix/0001-01-01/kube_node_stuff/00010101000000.parquet",
 			},
 		},
 		"flush": {
 			flush: true,
 			expectedFiles: []string{
-				"/test/0001-01-01/prefix/kube_node_stuff/00010101000000.parquet",
-				"/test/0001-01-01/prefix/kube_node_stuff/00010101000207.parquet",
+				"/test/prefix/0001-01-01/kube_node_stuff/00010101000000.parquet",
+				"/test/prefix/0001-01-01/kube_node_stuff/00010101000207.parquet",
 			},
 		},
 	}
@@ -90,6 +90,6 @@ func TestCreateBackendWriter(t *testing.T) {
 	// is 2024-03-07T10:14:30Z.  There are 63845403270 seconds between the zero time and the test time;
 	// 63845403270 // 127 = 502719710, 502719710 * 127 = 63845403170, and 0001-01-01T00:00:00Z + 63845403170 seconds
 	// is 2024-03-07T10:12:50Z.
-	assert.Equal(t, w.currentFile, "2024-03-07/prefix/kube_node_stuff/20240307101250.parquet")
+	assert.Equal(t, w.currentFile, "prefix/2024-03-07/kube_node_stuff/20240307101250.parquet")
 	assert.NotNil(t, w.pw)
 }

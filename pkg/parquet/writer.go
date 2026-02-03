@@ -119,7 +119,26 @@ func (self *Prom2ParquetWriter) createBackendWriter() error {
 	now := self.now().Truncate(self.flushInterval)
 	datePrefix := now.Format("2006-01-02")
 	basename := now.Format("20060102150405")
-	self.currentFile = fmt.Sprintf("%s/%s/%s.parquet", datePrefix, self.prefix, basename)
+	
+	// Split prefix to insert date between prefix and metric name
+	// self.prefix format: "prefix/metric_name" or just "metric_name"
+	lastSlash := -1
+	for i := len(self.prefix) - 1; i >= 0; i-- {
+		if self.prefix[i] == '/' {
+			lastSlash = i
+			break
+		}
+	}
+	
+	if lastSlash == -1 {
+		// No prefix, just metric name
+		self.currentFile = fmt.Sprintf("%s/%s/%s.parquet", datePrefix, self.prefix, basename)
+	} else {
+		// Has prefix: split into prefix part and metric name, insert date between them
+		prefixPart := self.prefix[:lastSlash]
+		metricName := self.prefix[lastSlash+1:]
+		self.currentFile = fmt.Sprintf("%s/%s/%s/%s.parquet", prefixPart, datePrefix, metricName, basename)
+	}
 
 	fw, err := backends.ConstructBackendForFile(self.root, self.currentFile, self.backend)
 	if err != nil {
