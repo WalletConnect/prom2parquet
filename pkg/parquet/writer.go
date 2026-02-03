@@ -3,6 +3,7 @@ package parquet
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/jonboulle/clockwork"
@@ -122,13 +123,7 @@ func (self *Prom2ParquetWriter) createBackendWriter() error {
 	
 	// Split prefix to insert date between prefix and metric name
 	// self.prefix format: "prefix/metric_name" or just "metric_name"
-	lastSlash := -1
-	for i := len(self.prefix) - 1; i >= 0; i-- {
-		if self.prefix[i] == '/' {
-			lastSlash = i
-			break
-		}
-	}
+	lastSlash := strings.LastIndex(self.prefix, "/")
 	
 	if lastSlash == -1 {
 		// No prefix, just metric name
