@@ -14,7 +14,7 @@ The prom2parquet remote write endpoint for Prometheus listens for incoming datap
 storage or to an AWS S3 bucket.  Metrics are saved in the following directory structure:
 
 ```
-/data/<prefix>/<metric name>/2024022021.parquet
+/data/<prefix>/<YYYY-MM-DD>/<metric name>/20240220211430.parquet
 ```
 
 Each file for a particular metric will have the same schema, but different metrics may have different schemas.  At a
