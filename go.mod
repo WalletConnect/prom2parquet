@@ -1,8 +1,6 @@
 module github.com/acrlabs/prom2parquet
 
-go 1.23.0
-
-toolchain go1.24.2
+go 1.25
 
 replace github.com/xitongsys/parquet-go => github.com/drmorr0/parquet-go v1.7.0
 
@@ -28,7 +26,7 @@ require (
 	github.com/alecthomas/units v0.0.0-20231202071711-9a357b53e9c9 // indirect
 	github.com/andybalholm/brotli v1.0.4 // indirect
 	github.com/apache/arrow/go/v12 v12.0.1 // indirect
-	github.com/apache/thrift v0.16.0 // indirect
+	github.com/apache/thrift v0.23.0 // indirect
 	github.com/aws/aws-sdk-go v1.48.14 // indirect
 	github.com/aws/aws-sdk-go-v2 v1.25.0 // indirect
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.5.1 // indirect
